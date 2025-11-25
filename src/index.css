@@ -1,0 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@100..800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap");
+@import "tailwindcss";
+
+body {
+  max-width: 1550px;
+  overflow-x: hidden;
+  margin: 0 auto;
+  font-family: "Roboto", "Anek Bangla", sans-serif;
+}
+
+/* font --01 */
+.font1 {
+  font-family: "Noto Serif", serif;
+}
+
+.color-1 {
+  background-color: #ff6d00;
+}
+.color-1-h {
+  background-color: #ff7900;
+}
+.color-2 {
+  background-color: #ff8500;
+}
+.color-t {
+  color: #1a1a1a;
+}
+.color-bg-1 {
+  background-color: #f7f7f7;
+}
