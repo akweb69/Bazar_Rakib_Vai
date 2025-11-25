@@ -1,65 +1,90 @@
-import React from 'react';
-import {
-    FaMobileAlt, FaLaptop, FaTshirt, FaHeadphones,
-    FaGamepad, FaCamera, FaHome, FaHeart
-} from 'react-icons/fa';
-import { GiLipstick, GiRunningShoe } from 'react-icons/gi';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Category = () => {
-    const data = [
-        { _id: 1, name: 'মোবাইল', icon: FaMobileAlt, color: 'bg-blue-500' },
-        { _id: 2, name: 'ল্যাপটপ', icon: FaLaptop, color: 'bg-purple-500' },
-        { _id: 3, name: 'ফ্যাশন', icon: FaTshirt, color: 'bg-pink-500' },
-        { _id: 4, name: 'ইলেকট্রনিক্স', icon: FaHeadphones, color: 'bg-indigo-500' },
-        { _id: 5, name: 'গেমিং', icon: FaGamepad, color: 'bg-green-500' },
-        { _id: 6, name: 'ক্যামেরা', icon: FaCamera, color: 'bg-red-500' },
-        { _id: 7, name: 'বিউটি', icon: GiLipstick, color: 'bg-rose-500' },
-        { _id: 8, name: 'জুতা', icon: GiRunningShoe, color: 'bg-amber-500' },
-        { _id: 9, name: 'হোম & লিভিং', icon: FaHome, color: 'bg-teal-500' },
-        { _id: 10, name: 'হেলথ', icon: FaHeart, color: 'bg-emerald-500' },
-    ];
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const base_url = import.meta.env.VITE_BASE_URL;
     const navigate = useNavigate();
-    // handle navigation--->
-    const handleNavigation = (path) => {
-        navigate(`/category/${path}`);
+
+    useEffect(() => {
+        setLoading(true);
+        axios.get(`${base_url}/categories`)
+            .then(res => {
+                const data = res.data;
+                setCategories(data);
+                console.log(data);
+            })
+            .catch(() => {
+                setCategories([]);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, []);
+
+    const handleNavigation = (name) => {
+        const slug = name.trim().replace(/\s+/g, '-').toLowerCase();
+        navigate(`/category/${slug}`);
+    };
+
+    // Loading Skeleton
+    if (loading) {
+        return (
+            <div className="w-11/12 mx-auto">
+                <h2 className="text-3xl font-bold text-center mb-10 text-gray-800">
+                    জনপ্রিয় ক্যাটাগরি
+                </h2>
+                <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-5 max-w-7xl mx-auto">
+                    {[...Array(20)].map((_, i) => (
+                        <div key={i} className="flex flex-col items-center">
+                            <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-200 border-2 border-dashed rounded-full animate-pulse" />
+                            <div className="h-3 bg-gray-200 rounded-full w-14 mt-2 animate-pulse" />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
     }
+
     return (
-        <div className="py-8">
-            <div className=" mx-auto">
-                {/* Section Title */}
-                <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-gray-800">
+        <div className="w-11/12 mx-auto my-6">
+            <div className="max-w-7xl mx-auto">
+                <h2 className="text-2xl md:text-3xl font-bold text-center mb-6 text-gray-800">
                     জনপ্রিয় ক্যাটাগরি
                 </h2>
 
-                {/* Category Grid */}
                 <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-4 md:gap-6">
-                    {data.map((item) => {
-                        const Icon = item.icon;
-                        return (
-                            <div
+                    {categories?.map((item) => (
+                        <div
+                            key={item._id}
+                            onClick={() => handleNavigation(item?.name)}
+                            className="group cursor-pointer transform transition-all duration-300 hover:scale-110 hover:z-10"
+                        >
+                            <div className="flex flex-col items-center space-y-3 p-3 rounded-2xl hover:bg-white hover:shadow-2xl transition-all duration-300 border border-transparent hover:border-blue-200">
 
-                                key={item._id}
-                                className="group cursor-pointer transform transition-all duration-300 hover:scale-110"
-                            >
-                                <div
-                                    onClick={() => handleNavigation(item.name)}
-                                    className="flex flex-col items-center space-y-2">
-                                    {/* Icon Circle */}
-                                    <div
-                                        className={`${item.color} p-4 md:p-5 rounded-full shadow-lg group-hover:shadow-2xl transition-all duration-300 transform group-hover:-translate-y-2`}
-                                    >
-                                        <Icon className="w-8 h-8 md:w-10 md:h-10 text-white" />
-                                    </div>
-
-                                    {/* Category Name */}
-                                    <p className="text-xs md:text-sm font-medium text-gray-700 group-hover:text-gray-900 text-center whitespace-nowrap">
-                                        {item.name}
-                                    </p>
+                                {/* Category Image */}
+                                <div className="relative">
+                                    <img
+                                        src={item.image}
+                                        alt={item.name}
+                                        className="w-16 h-16 md:w-20 md:h-20 object-cover rounded-full border-4 border-white shadow-lg group-hover:border-blue-400 transition-all duration-300"
+                                        onError={(e) => {
+                                            e.target.src = "https://i.ibb.co/7yz7Yg7/placeholder.png"; // fallback
+                                        }}
+                                    />
+                                    {/* Hover glow effect */}
+                                    <div className="absolute inset-0 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-blue-400 blur-xl -z-10"></div>
                                 </div>
+
+                                {/* Category Name */}
+                                <p className="text-xs md:text-sm font-semibold text-gray-700 group-hover:text-blue-600 text-center px-1 line-clamp-2">
+                                    {item?.name}
+                                </p>
                             </div>
-                        );
-                    })}
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>
