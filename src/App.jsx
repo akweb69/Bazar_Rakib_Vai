@@ -7,6 +7,7 @@ import AdminLayout from './Admin/Layout/AdminLayout';
 import { Toaster } from 'react-hot-toast';
 import ProductsManagement from './Admin/Pages/ProductsManagement';
 import AdminDash from './Admin/Pages/AdminDash';
+import CategoryManagement from './Admin/Pages/CategoryManagement';
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDash />} />
             <Route path="products" element={<ProductsManagement />} />
+            <Route path="category" element={<CategoryManagement />} />
 
 
           </Route>
