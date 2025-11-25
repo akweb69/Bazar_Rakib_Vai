@@ -9,30 +9,37 @@ const ProductsManagement = () => {
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
 
-    // নতুন: Search state
+    // Search state
     const [searchQuery, setSearchQuery] = useState("");
 
-    // Form states (shared for Add & Edit)
+    // Form states
     const [editMode, setEditMode] = useState(false);
     const [editingProductId, setEditingProductId] = useState(null);
 
     const [productName, setProductName] = useState("");
-    const [priceType, setPriceType] = useState("single");
-    const [singlePrice, setSinglePrice] = useState("");
-    const [sizes, setSizes] = useState([{ size: "", price: "" }]);
+    const [price, setPrice] = useState("");           // নতুন: একটা সিম্পল প্রাইস
+    const [category, setCategory] = useState("");     // নতুন: ক্যাটেগরি
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState("");
     const [existingImage, setExistingImage] = useState("");
+    const [categories, setCategories] = useState([]);
 
     const base_url = import.meta.env.VITE_BASE_URL;
     const imgbb_api_key = import.meta.env.VITE_IMGBB_API_KEY;
 
-    // Fetch products
+    // Fetch products & categories
     useEffect(() => {
         if (activeTab === 1) {
             fetchProducts();
         }
     }, [activeTab]);
+
+    useEffect(() => {
+        axios
+            .get(`${base_url}/categories`)
+            .then((res) => setCategories(res.data))
+            .catch((err) => console.error("Failed to load categories", err));
+    }, []);
 
     const fetchProducts = async () => {
         setFetching(true);
@@ -46,17 +53,16 @@ const ProductsManagement = () => {
         }
     };
 
-    // নতুন: Search + Filter logic (useMemo দিয়ে performance ভালো রাখা হয়েছে)
+    // Search filter
     const filteredProducts = useMemo(() => {
         if (!searchQuery.trim()) return products;
-
         const query = searchQuery.toLowerCase();
         return products.filter((product) =>
             product.name.toLowerCase().includes(query)
         );
     }, [products, searchQuery]);
 
-    // Image upload
+    // Image upload to imgbb
     const uploadImage = async (file) => {
         const formData = new FormData();
         formData.append("image", file);
@@ -67,32 +73,16 @@ const ProductsManagement = () => {
         return res.data.data.url;
     };
 
-    // Dynamic size handlers
-    const addSizeField = () => setSizes([...sizes, { size: "", price: "" }]);
-    const removeSizeField = (index) => setSizes(sizes.filter((_, i) => i !== index));
-    const updateSize = (index, field, value) => {
-        const updated = [...sizes];
-        updated[index][field] = value;
-        setSizes(updated);
-    };
-
-    // Start Edit Mode
+    // Start Edit
     const startEdit = (product) => {
         setEditMode(true);
         setEditingProductId(product._id);
+
         setProductName(product.name);
+        setPrice(product.price);
+        setCategory(product.category || "");
         setExistingImage(product.image);
         setImagePreview(product.image);
-
-        if (product.price.type === "single") {
-            setPriceType("single");
-            setSinglePrice(product.price.price.toString());
-            setSizes([{ size: "", price: "" }]);
-        } else {
-            setPriceType("multiple");
-            setSinglePrice("");
-            setSizes(product.price.sizes.map(s => ({ size: s.size, price: s.price.toString() })));
-        }
 
         setActiveTab(2);
         window.scrollTo({ top: 0, behavior: "smooth" });
@@ -108,42 +98,35 @@ const ProductsManagement = () => {
     // Reset form
     const resetForm = () => {
         setProductName("");
-        setPriceType("single");
-        setSinglePrice("");
-        setSizes([{ size: "", price: "" }]);
+        setPrice("");
+        setCategory("");
         setImage(null);
         setImagePreview("");
         setExistingImage("");
     };
 
-    // Submit (Add or Update)
+    // Submit (Add / Update)
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         if (!productName) return toast.error("Product name is required");
+        if (!price) return toast.error("Price is required");
+        if (!category) return toast.error("Please select a category");
 
         setLoading(true);
         try {
             let imageUrl = existingImage;
 
             if (image) {
-                toast.loading("Uploading new image...");
+                toast.loading("Uploading image...");
                 imageUrl = await uploadImage(image);
                 toast.dismiss();
             }
 
-            const priceData =
-                priceType === "single"
-                    ? { type: "single", price: Number(singlePrice) }
-                    : {
-                        type: "multiple",
-                        sizes: sizes
-                            .filter(s => s.size && s.price)
-                            .map(s => ({ size: s.size, price: Number(s.price) }))
-                    };
-
             const productData = {
                 name: productName,
-                price: priceData,
+                price: Number(price),        // শুধু একটা সংখ্যা
+                category: category,          // category ID
                 image: imageUrl,
             };
 
@@ -161,7 +144,8 @@ const ProductsManagement = () => {
             setEditingProductId(null);
             fetchProducts();
         } catch (err) {
-            toast.error(editMode ? "Failed to update" : "Failed to add product");
+            console.error(err);
+            toast.error(editMode ? "Failed to update product" : "Failed to add product");
         } finally {
             setLoading(false);
         }
@@ -191,8 +175,7 @@ const ProductsManagement = () => {
                         onClick={() => setActiveTab(1)}
                         className={`py-4 rounded-xl font-semibold transition-all ${activeTab === 1
                             ? "bg-orange-500 text-white shadow-lg"
-                            : "bg-white text-orange-500 border border-orange-200"
-                            }`}
+                            : "bg-white text-orange-500 border border-orange-200"}`}
                     >
                         All Products
                     </button>
@@ -200,8 +183,7 @@ const ProductsManagement = () => {
                         onClick={() => { setActiveTab(2); if (!editMode) cancelEdit(); }}
                         className={`py-4 rounded-xl font-semibold transition-all ${activeTab === 2
                             ? "bg-orange-500 text-white shadow-lg"
-                            : "bg-white text-orange-500 border border-orange-200"
-                            }`}
+                            : "bg-white text-orange-500 border border-orange-200"}`}
                     >
                         {editMode ? "Edit Product" : "Add New Product"}
                     </button>
@@ -210,7 +192,7 @@ const ProductsManagement = () => {
                 {/* All Products Tab */}
                 {activeTab === 1 && (
                     <div className="bg-white rounded-xl shadow-md p-6">
-                        {/* নতুন: Search Bar */}
+                        {/* Search */}
                         <div className="mb-8">
                             <div className="relative">
                                 <input
@@ -218,80 +200,35 @@ const ProductsManagement = () => {
                                     placeholder="Search products by name..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className="w-full px-5 py-4 pl-12 text-lg border border-orange-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 transition-all"
+                                    className="w-full px-5 py-4 pl-12 text-lg border border-orange-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500"
                                 />
-                                <svg
-                                    className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-orange-500"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                                    />
+                                <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
                             </div>
-                            {searchQuery && (
-                                <p className="mt-2 text-sm text-gray-600">
-                                    {filteredProducts.length} of {products.length} products found
-                                </p>
-                            )}
                         </div>
 
                         {fetching ? (
-                            <div className="h-[50vh] flex items-center justify-center">
-                                <Loader />
-                            </div>
+                            <div className="h-[50vh] flex items-center justify-center"><Loader /></div>
                         ) : filteredProducts.length === 0 ? (
                             <p className="text-center py-16 text-gray-500 text-xl">
-                                {searchQuery ? "No products match your search." : "No products yet."}
+                                {searchQuery ? "No matching products found." : "No products yet."}
                             </p>
                         ) : (
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                                 {filteredProducts.map((product) => (
-                                    <div
-                                        key={product._id}
-                                        className="border border-orange-100 rounded-xl overflow-hidden shadow-lg bg-white hover:shadow-xl transition-shadow"
-                                    >
-                                        <img
-                                            src={product.image}
-                                            alt={product.name}
-                                            className="w-full h-48 object-cover"
-                                        />
+                                    <div key={product._id} className="border border-orange-100 rounded-xl overflow-hidden shadow-lg bg-white hover:shadow-xl transition-shadow">
+                                        <img src={product.image} alt={product.name} className="w-full h-48 object-cover" />
                                         <div className="p-4">
                                             <h3 className="font-bold text-lg truncate">{product.name}</h3>
-
-                                            {product.price.type === "single" ? (
-                                                <p className="text-orange-600 font-bold text-lg">৳{product.price.price}</p>
-                                            ) : (
-                                                <div className="text-sm space-y-1 mt-1">
-                                                    {product.price.sizes.slice(0, 3).map((s, i) => (
-                                                        <p key={i}>
-                                                            <span className="font-medium">{s.size}:</span> ৳{s.price}
-                                                        </p>
-                                                    ))}
-                                                    {product.price.sizes.length > 3 && (
-                                                        <p className="text-gray-500">
-                                                            +{product.price.sizes.length - 3} more
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            )}
+                                            <p className="text-sm text-gray-600">{product.category || "Uncategorized"}</p>
+                                            <p className="text-orange-600 font-bold text-lg mt-1">৳{product.price}</p>
 
                                             <div className="mt-4 flex gap-2">
-                                                <button
-                                                    onClick={() => startEdit(product)}
-                                                    className="flex-1 bg-blue-500 text-white py-2 rounded hover:bg-blue-600 text-sm font-medium transition"
-                                                >
+                                                <button onClick={() => startEdit(product)} className="flex-1 bg-blue-500 text-white py-2 rounded hover:bg-blue-600 text-sm font-medium">
                                                     Edit
                                                 </button>
-                                                <button
-                                                    onClick={() => deleteProduct(product._id)}
-                                                    className="flex-1 bg-red-500 text-white py-2 rounded hover:bg-red-600 text-sm font-medium transition"
-                                                >
+                                                <button onClick={() => deleteProduct(product._id)} className="flex-1 bg-red-500 text-white py-2 rounded hover:bg-red-600 text-sm font-medium">
                                                     Delete
                                                 </button>
                                             </div>
@@ -303,7 +240,7 @@ const ProductsManagement = () => {
                     </div>
                 )}
 
-                {/* Add / Edit Form – একদম আগের মতো */}
+                {/* Add / Edit Form */}
                 {activeTab === 2 && (
                     <div className="bg-white rounded-xl shadow-md p-8">
                         <h2 className="text-2xl font-bold text-orange-600 mb-6">
@@ -311,110 +248,54 @@ const ProductsManagement = () => {
                         </h2>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
-                            {/* Name */}
+                            {/* Product Name */}
                             <div>
                                 <label className="block font-medium mb-2">Product Name</label>
                                 <input
                                     type="text"
                                     required
-                                    placeholder="Enter Product Name"
+                                    placeholder="Enter product name"
                                     value={productName}
                                     onChange={(e) => setProductName(e.target.value)}
                                     className="w-full px-4 py-3 border border-orange-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                                 />
                             </div>
 
-                            {/* Price Type */}
+                            {/* Category Select */}
                             <div>
-                                <label className="block font-medium mb-3">Price Type</label>
-                                <div className="flex gap-8">
-                                    <label className="flex items-center gap-2">
-                                        <input
-                                            type="radio"
-                                            name="priceType"
-                                            value="single"
-                                            checked={priceType === "single"}
-                                            onChange={(e) => setPriceType(e.target.value)}
-                                            className="w-5 h-5 text-orange-500"
-                                        />
-                                        <span>Single Size</span>
-                                    </label>
-                                    <label className="flex items-center gap-2">
-                                        <input
-                                            type="radio"
-                                            name="priceType"
-                                            value="multiple"
-                                            checked={priceType === "multiple"}
-                                            onChange={(e) => setPriceType(e.target.value)}
-                                            className="w-5 h-5 text-orange-500"
-                                        />
-                                        <span>Multiple Sizes</span>
-                                    </label>
-                                </div>
+                                <label className="block font-medium mb-2">Category</label>
+                                <select
+                                    required
+                                    value={category}
+                                    onChange={(e) => setCategory(e.target.value)}
+                                    className="w-full px-4 py-3 border border-orange-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                >
+                                    <option value="">Select a category</option>
+                                    {categories.map((cat) => (
+                                        <option key={cat._id} value={cat.name}>
+                                            {cat.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
-                            {/* Single Price */}
-                            {priceType === "single" && (
-                                <div>
-                                    <label className="block font-medium mb-2">Price (৳)</label>
-                                    <input
-                                        type="number"
-                                        required
-                                        placeholder="Enter Product Price"
-                                        value={singlePrice}
-                                        onChange={(e) => setSinglePrice(e.target.value)}
-                                        className="w-full px-4 py-3 border border-orange-300 rounded-lg focus:ring-orange-500 focus:outline-none"
-                                    />
-                                </div>
-                            )}
-
-                            {/* Multiple Sizes */}
-                            {priceType === "multiple" && (
-                                <div>
-                                    <label className="block font-medium mb-3">Sizes & Prices</label>
-                                    {sizes.map((item, index) => (
-                                        <div key={index} className="flex gap-3 mb-3 items-center">
-                                            <input
-                                                type="text"
-                                                placeholder="Size"
-                                                value={item.size}
-                                                onChange={(e) => updateSize(index, "size", e.target.value)}
-                                                className="w-full px-4 py-3 border border-orange-300 rounded-lg"
-                                                required
-                                            />
-                                            <input
-                                                type="number"
-                                                placeholder="Price (৳)"
-                                                value={item.price}
-                                                onChange={(e) => updateSize(index, "price", e.target.value)}
-                                                className="w-full px-4 py-3 border border-orange-300 rounded-lg text-gray-900"
-                                                required
-                                            />
-                                            {sizes.length > 1 && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removeSizeField(index)}
-                                                    className="text-red-500 text-2xl"
-                                                >
-                                                    ×
-                                                </button>
-                                            )}
-                                        </div>
-                                    ))}
-                                    <button
-                                        type="button"
-                                        onClick={addSizeField}
-                                        className="text-orange-600 font-semibold"
-                                    >
-                                        + Add Size
-                                    </button>
-                                </div>
-                            )}
+                            {/* Price */}
+                            <div>
+                                <label className="block font-medium mb-2">Price (৳)</label>
+                                <input
+                                    type="number"
+                                    required
+                                    placeholder="Enter price"
+                                    value={price}
+                                    onChange={(e) => setPrice(e.target.value)}
+                                    className="w-full px-4 py-3 border border-orange-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                />
+                            </div>
 
                             {/* Image */}
                             <div>
                                 <label className="block font-medium mb-2">
-                                    Product Image {editMode && "(leave unchanged if same)"}
+                                    Product Image {editMode && "(leave blank to keep current)"}
                                 </label>
                                 <input
                                     type="file"
@@ -426,20 +307,16 @@ const ProductsManagement = () => {
                                             setImagePreview(URL.createObjectURL(file));
                                         }
                                     }}
-                                    className="w-full border-orange-500 border rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                                    className="w-full border border-orange-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-orange-500"
                                 />
                                 {imagePreview && (
                                     <div className="mt-4">
-                                        <img
-                                            src={imagePreview}
-                                            alt="Preview"
-                                            className="w-64 h-64 object-cover rounded-lg border"
-                                        />
+                                        <img src={imagePreview} alt="Preview" className="w-64 h-64 object-cover rounded-lg border" />
                                     </div>
                                 )}
                             </div>
 
-                            {/* Buttons */}
+                            {/* Submit Buttons */}
                             <div className="flex gap-4">
                                 <button
                                     type="submit"
