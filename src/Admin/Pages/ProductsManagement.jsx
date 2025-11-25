@@ -17,8 +17,8 @@ const ProductsManagement = () => {
     const [editingProductId, setEditingProductId] = useState(null);
 
     const [productName, setProductName] = useState("");
-    const [price, setPrice] = useState("");           // নতুন: একটা সিম্পল প্রাইস
-    const [category, setCategory] = useState("");     // নতুন: ক্যাটেগরি
+    const [price, setPrice] = useState("");
+    const [category, setCategory] = useState("");
     const [image, setImage] = useState(null);
     const [imagePreview, setImagePreview] = useState("");
     const [existingImage, setExistingImage] = useState("");
@@ -38,8 +38,11 @@ const ProductsManagement = () => {
         axios
             .get(`${base_url}/categories`)
             .then((res) => setCategories(res.data))
-            .catch((err) => console.error("Failed to load categories", err));
-    }, []);
+            .catch((err) => {
+                console.error("Failed to load categories", err);
+                toast.error("ক্যাটেগরি লোড করতে সমস্যা হয়েছে", { id: "category-error" });
+            });
+    }, [base_url]);
 
     const fetchProducts = async () => {
         setFetching(true);
@@ -47,7 +50,7 @@ const ProductsManagement = () => {
             const res = await axios.get(`${base_url}/products`);
             setProducts(res.data);
         } catch (err) {
-            toast.error("Failed to load products");
+            toast.error("প্রোডাক্ট লোড করতে ব্যর্থ হয়েছে", { id: "fetch-products-error" });
         } finally {
             setFetching(false);
         }
@@ -109,34 +112,37 @@ const ProductsManagement = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!productName) return toast.error("Product name is required");
-        if (!price) return toast.error("Price is required");
-        if (!category) return toast.error("Please select a category");
+        if (!productName) return toast.error("প্রোডাক্টের নাম দিতে হবে", { id: "name-error" });
+        if (!price) return toast.error("দাম দিতে হবে", { id: "price-error" });
+        if (!category) return toast.error("ক্যাটেগরি বাছাই করুন", { id: "category-error" });
 
         setLoading(true);
+        const loadingToastId = toast.loading("ইমেজ আপলোড হচ্ছে...");
+
         try {
             let imageUrl = existingImage;
 
             if (image) {
-                toast.loading("Uploading image...");
                 imageUrl = await uploadImage(image);
-                toast.dismiss();
+                toast.dismiss(loadingToastId);
+            } else {
+                toast.dismiss(loadingToastId);
             }
 
             const productData = {
                 name: productName,
-                price: Number(price),        // শুধু একটা সংখ্যা
-                category: category,          // category ID
+                price: Number(price),
+                category: category,
                 image: imageUrl,
             };
 
             if (editMode) {
                 await axios.patch(`${base_url}/products/${editingProductId}`, productData);
-                toast.success("Product updated successfully!");
+                toast.success("প্রোডাক্ট সফলভাবে আপডেট হয়েছে!", { id: "update-success" });
             } else {
                 productData.createdAt = new Date();
                 await axios.post(`${base_url}/products`, productData);
-                toast.success("Product added successfully!");
+                toast.success("নতুন প্রোডাক্ট যোগ হয়েছে!", { id: "add-success" });
             }
 
             resetForm();
@@ -145,7 +151,9 @@ const ProductsManagement = () => {
             fetchProducts();
         } catch (err) {
             console.error(err);
-            toast.error(editMode ? "Failed to update product" : "Failed to add product");
+            toast.error(editMode ? "আপডেট করতে ব্যর্থ হয়েছে" : "প্রোডাক্ট যোগ করতে ব্যর্থ হয়েছে", {
+                id: "submit-error",
+            });
         } finally {
             setLoading(false);
         }
@@ -153,13 +161,14 @@ const ProductsManagement = () => {
 
     // Delete
     const deleteProduct = async (id) => {
-        if (!confirm("ডিলিট করবেন?")) return;
+        if (!window.confirm("এই প্রোডাক্টটি ডিলিট করবেন?")) return;
+
         try {
             await axios.delete(`${base_url}/products/${id}`);
-            toast.success("Product deleted");
+            toast.success("প্রোডাক্ট ডিলিট হয়েছে", { id: `delete-${id}` });
             fetchProducts();
         } catch (err) {
-            toast.error("Delete failed");
+            toast.error("ডিলিট করতে ব্যর্থ হয়েছে", { id: "delete-error" });
         }
     };
 
@@ -197,7 +206,7 @@ const ProductsManagement = () => {
                             <div className="relative">
                                 <input
                                     type="text"
-                                    placeholder="Search products by name..."
+                                    placeholder="প্রোডাক্টের নাম দিয়ে সার্চ করুন..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     className="w-full px-5 py-4 pl-12 text-lg border border-orange-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -212,7 +221,7 @@ const ProductsManagement = () => {
                             <div className="h-[50vh] flex items-center justify-center"><Loader /></div>
                         ) : filteredProducts.length === 0 ? (
                             <p className="text-center py-16 text-gray-500 text-xl">
-                                {searchQuery ? "No matching products found." : "No products yet."}
+                                {searchQuery ? "কোনো প্রোডাক্ট পাওয়া যায়নি।" : "এখনো কোনো প্রোডাক্ট নেই।"}
                             </p>
                         ) : (
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -254,7 +263,7 @@ const ProductsManagement = () => {
                                 <input
                                     type="text"
                                     required
-                                    placeholder="Enter product name"
+                                    placeholder="প্রোডাক্টের নাম লিখুন"
                                     value={productName}
                                     onChange={(e) => setProductName(e.target.value)}
                                     className="w-full px-4 py-3 border border-orange-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -270,7 +279,7 @@ const ProductsManagement = () => {
                                     onChange={(e) => setCategory(e.target.value)}
                                     className="w-full px-4 py-3 border border-orange-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                                 >
-                                    <option value="">Select a category</option>
+                                    <option value="">ক্যাটেগরি বাছাই করুন</option>
                                     {categories.map((cat) => (
                                         <option key={cat._id} value={cat.name}>
                                             {cat.name}
@@ -285,7 +294,7 @@ const ProductsManagement = () => {
                                 <input
                                     type="number"
                                     required
-                                    placeholder="Enter price"
+                                    placeholder="দাম লিখুন"
                                     value={price}
                                     onChange={(e) => setPrice(e.target.value)}
                                     className="w-full px-4 py-3 border border-orange-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -295,7 +304,7 @@ const ProductsManagement = () => {
                             {/* Image */}
                             <div>
                                 <label className="block font-medium mb-2">
-                                    Product Image {editMode && "(leave blank to keep current)"}
+                                    Product Image {editMode && "(বর্তমান ইমেজ রাখতে ফাঁকা রাখুন)"}
                                 </label>
                                 <input
                                     type="file"
@@ -323,7 +332,7 @@ const ProductsManagement = () => {
                                     disabled={loading}
                                     className="flex-1 bg-orange-500 text-white py-4 rounded-lg font-bold hover:bg-orange-600 disabled:opacity-70"
                                 >
-                                    {loading ? "Saving..." : editMode ? "Update Product" : "Add Product"}
+                                    {loading ? "সেভ হচ্ছে..." : editMode ? "আপডেট করুন" : "প্রোডাক্ট যোগ করুন"}
                                 </button>
                                 {editMode && (
                                     <button
@@ -331,7 +340,7 @@ const ProductsManagement = () => {
                                         onClick={cancelEdit}
                                         className="px-8 py-4 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
                                     >
-                                        Cancel
+                                        বাতিল
                                     </button>
                                 )}
                             </div>
