@@ -30,7 +30,7 @@ const SignupForm = () => {
     };
 
     return (
-        <div className="min-h-screen -my-4  bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center px-4 relative overflow-hidden">
+        <div className="min-h-screen -my-4 pt-10  bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex justify-center px-4 relative overflow-hidden">
             {/* Animated Background Orbs */}
             <div className="absolute inset-0">
                 <motion.div

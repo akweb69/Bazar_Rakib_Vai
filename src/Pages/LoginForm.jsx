@@ -23,7 +23,7 @@ const LoginForm = () => {
     };
 
     return (
-        <div className="min-h-screen -my-4 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center px-4">
+        <div className="min-h-screen -my-4 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex pt-10 justify-center px-4">
             {/* Animated Background Orbs */}
             <div className="absolute inset-0 overflow-hidden">
                 <motion.div
