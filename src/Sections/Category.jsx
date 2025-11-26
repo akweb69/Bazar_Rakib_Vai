@@ -49,7 +49,7 @@ const Category = () => {
     }
 
     return (
-        <div className=" my-6">
+        <div className=" mt-6">
             <div className="w-full">
                 <h2 className="text-2xl md:text-3xl font-semibold text-center mb-6 text-orange-500 font2">
                     Categories
@@ -71,7 +71,7 @@ const Category = () => {
                                         alt={item.name}
                                         className="w-16 h-16 md:w-20 md:h-20 object-cover rounded-full border-4 border-white shadow-lg group-hover:border-blue-400 transition-all duration-300"
                                         onError={(e) => {
-                                            e.target.src = "https://i.ibb.co/7yz7Yg7/placeholder.png"; // fallback
+                                            e.target.src = "https://i.ibb.co/7yz7Yg7/placeholder.png";
                                         }}
                                     />
                                     {/* Hover glow effect */}

@@ -8,7 +8,7 @@ const HomePageLayout = () => {
         <>
             <Header />
             {/* outlet */}
-            <div className="min-h-screen mt-4">
+            <div className="min-h-screen mt-4 pb-20">
                 <Outlet />
             </div>
             {/* Footer */}
