@@ -1,5 +1,6 @@
 import Category from "../Sections/Category";
 import HeroSection from "../Sections/HeroSection";
+import ProductSection from "../Sections/ProductSection";
 
 
 const HomePage = () => {
@@ -7,6 +8,7 @@ const HomePage = () => {
         <div className="w-11/12 mx-auto">
             <HeroSection />
             <Category />
+            <ProductSection />
 
 
         </div>

@@ -32,11 +32,11 @@ const Category = () => {
     // Loading Skeleton
     if (loading) {
         return (
-            <div className="w-11/12 mx-auto">
-                <h2 className="text-3xl font-bold text-center mb-10 text-gray-800">
-                    জনপ্রিয় ক্যাটাগরি
+            <div className="w-full">
+                <h2 className="text-3xl font-semibold text-center mb-10 text-orange-500 font2">
+                    Categories
                 </h2>
-                <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-5 max-w-7xl mx-auto">
+                <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-5 w-full">
                     {[...Array(20)].map((_, i) => (
                         <div key={i} className="flex flex-col items-center">
                             <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-200 border-2 border-dashed rounded-full animate-pulse" />
@@ -49,10 +49,10 @@ const Category = () => {
     }
 
     return (
-        <div className="w-11/12 mx-auto my-6">
-            <div className="max-w-7xl mx-auto">
-                <h2 className="text-2xl md:text-3xl font-bold text-center mb-6 text-gray-800">
-                    জনপ্রিয় ক্যাটাগরি
+        <div className=" my-6">
+            <div className="w-full">
+                <h2 className="text-2xl md:text-3xl font-semibold text-center mb-6 text-orange-500 font2">
+                    Categories
                 </h2>
 
                 <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-4 md:gap-6">
