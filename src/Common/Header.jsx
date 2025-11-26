@@ -3,11 +3,13 @@ import { Menu, ShoppingCart, User } from "lucide-react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
+import useCart from "../Components/useCart";
 
 const Header = () => {
     const navigate = useNavigate();
     const { user, loading } = useContext(AuthContext)
-    const [totalCartItems, setTotalCartItems] = useState(0);
+    const { cart, loading: cartLoading, } = useCart()
+    console.log(cart);
 
     const handleSignUp = () => {
         navigate('/signup');
@@ -38,7 +40,7 @@ const Header = () => {
                     >
                         <ShoppingCart size={16} />
 
-                        <p className="absolute -top-1 -right-1.5 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{totalCartItems}</p>
+                        <p className="absolute -top-1 -right-1.5 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{cartLoading ? "" : cart?.length}</p>
 
                     </motion.div>
 

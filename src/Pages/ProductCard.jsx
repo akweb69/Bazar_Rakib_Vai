@@ -1,5 +1,9 @@
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "../Context/AuthContext";
+import axios from "axios";
+import toast from "react-hot-toast";
+import useCart from "../Components/useCart";
 
 const ProductCard = ({ product }) => {
     const { name, image, price, _id } = product;
@@ -9,6 +13,37 @@ const ProductCard = ({ product }) => {
     const [loading, setLoading] = useState(false);
     const base_url = import.meta.env.VITE_BASE_URL;
     const itemQuantity = [0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    const { user } = useContext(AuthContext);
+    const email = user?.email;
+    const { refetch } = useCart();
+
+
+    const handleAddToCart = () => {
+        const cartItem = {
+            productId: _id,
+            name,
+            image,
+            price: selectedPrice,
+            quantity: selectQuantity,
+            email: email,
+        };
+
+        setLoading(true);
+        axios.post(`${base_url}/carts`, cartItem)
+            .then((res) => {
+                toast.success("Product added to cart!");
+                setOpenModal(false);
+                refetch();
+            }
+            )
+            .catch(() => {
+                toast.error("Failed to add product to cart.");
+            })
+            .finally(() => {
+                setLoading(false);
+            })
+
+    };
 
 
 
@@ -76,10 +111,10 @@ const ProductCard = ({ product }) => {
 
                                 {/* cart now btn */}
                                 <button
-                                    onClick={() => setOpenModal(false)}
+                                    onClick={handleAddToCart}
                                     className="mt-4 w-full bg-orange-500 text-white py-2 rounded-md hover:bg-orange-600 transition-colors duration-300"
                                 >
-                                    Cart Now
+                                    {loading ? 'Adding...' : 'Add to Cart'}
                                 </button>
                             </div>
 
