@@ -1,16 +1,17 @@
 import { motion } from "framer-motion";
-import { Home, ShoppingBag, LayoutGrid } from "lucide-react";
+import { Home, ShoppingBag, LayoutGrid, User } from "lucide-react";
 
 const BottomNavUser = () => {
     const navItems = [
         { id: 1, label: "Home", icon: <Home size={22} /> },
         { id: 2, label: "My Orders", icon: <ShoppingBag size={22} /> },
         { id: 3, label: "Category", icon: <LayoutGrid size={22} /> },
+        { id: 4, label: "Account", icon: <User size={22} /> },
     ];
 
     return (
         <div className="fixed bottom-0 left-0 w-full h-16 bg-white/70 dark:bg-black/20 backdrop-blur-xl shadow-top z-50 border-t border-orange-300/40">
-            <div className="w-11/12 mx-auto h-full grid grid-cols-3 items-center">
+            <div className="w-11/12 mx-auto h-full grid grid-cols-4 items-center">
                 {navItems.map((item) => (
                     <motion.button
                         key={item.id}

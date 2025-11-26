@@ -8,6 +8,8 @@ import { Toaster } from 'react-hot-toast';
 import ProductsManagement from './Admin/Pages/ProductsManagement';
 import AdminDash from './Admin/Pages/AdminDash';
 import CategoryManagement from './Admin/Pages/CategoryManagement';
+import SignupForm from './Pages/SignupForm';
+import LoginForm from './Pages/LoginForm';
 
 
 function App() {
@@ -26,6 +28,9 @@ function App() {
           <Route path="/" element={<HomePageLayout />}>
             {/* index => shows up by default when url is "/" */}
             <Route index element={<HomePage />} />
+            <Route path="signup" element={<SignupForm />} />
+            <Route path="login" element={<LoginForm />} />
+
 
           </Route>
           {/* admin routes */}
