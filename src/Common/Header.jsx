@@ -8,6 +8,7 @@ import useCart from "../Components/useCart";
 const Header = () => {
     const navigate = useNavigate();
     const { user, loading } = useContext(AuthContext)
+    const [openCart, setOpenCart] = useState(false);
     const { cart, isLoading } = useCart()
     console.log(cart);
 
@@ -34,6 +35,7 @@ const Header = () => {
                 {/* Right Profile Icon */}
                 <div className="flex items-center gap-3">
                     <motion.div
+                        onClick={() => setOpenCart(!openCart)}
                         whileTap={{ scale: 0.8 }}
                         whileHover={{ scale: 1.1 }}
                         className="h-10 w-10 rounded-full bg-orange-500 flex justify-center items-center text-white shadow-md cursor-pointer relative"
@@ -63,6 +65,42 @@ const Header = () => {
                 </div>
 
             </div>
+
+            {openCart && (
+                <motion.div
+                    initial={{ opacity: 0, x: 1000 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 1, type: "spring" }}
+                    exit={{ opacity: 0, x: 1000 }}
+
+                    className="absolute top-14 right-0 w-10/12 bg-white/95 backdrop-blur-md rounded-l-lg shadow-lg p-4 z-50">
+
+                    {/* close btn */}
+                    <div
+                        onClick={() => setOpenCart(false)} className="absolute top-0 right-0 h-10 w-10 rounded-l-full flex justify-center items-center cursor-pointer bg-red-500 text-white font-semibold pl-1">X</div>
+
+                    <h3 className="text-lg font-semibold mb-4 text-orange-500">Shopping Cart</h3>
+
+                    {cart.length > 0 ? (
+                        <ul className="space-y-3 max-h-60 overflow-y-auto">
+                            {cart.map((item) => (
+                                <li key={item._id} className="flex items-center justify-between">
+                                    <div>
+                                        <p className="font-medium">{item.name}</p>
+                                        <p className="text-sm text-gray-500">
+                                            Quantity: {item.quantity} Kg
+                                        </p>
+                                    </div>
+                                    <p className="font-semibold">RM {item.price}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="text-gray-500">Your cart is empty.</p>
+                    )}
+                </motion.div>
+            )}
+
         </motion.div>
     );
 };
