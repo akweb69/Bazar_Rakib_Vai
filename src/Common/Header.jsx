@@ -8,7 +8,7 @@ import useCart from "../Components/useCart";
 const Header = () => {
     const navigate = useNavigate();
     const { user, loading } = useContext(AuthContext)
-    const { cart, loading: cartLoading, } = useCart()
+    const { cart, isLoading } = useCart()
     console.log(cart);
 
     const handleSignUp = () => {
@@ -40,7 +40,7 @@ const Header = () => {
                     >
                         <ShoppingCart size={16} />
 
-                        <p className="absolute -top-1 -right-1.5 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{cartLoading ? "" : cart?.length}</p>
+                        <p className="absolute -top-1 -right-1.5 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">{isLoading ? "" : cart?.length}</p>
 
                     </motion.div>
 
