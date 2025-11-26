@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Home, ShoppingBag, LayoutGrid, User } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const BottomNavUser = () => {
     const navItems = [
@@ -8,7 +9,18 @@ const BottomNavUser = () => {
         { id: 3, label: "Category", icon: <LayoutGrid size={22} /> },
         { id: 4, label: "Account", icon: <User size={22} /> },
     ];
-
+    const navigate = useNavigate();
+    const handleclick = (label) => {
+        if (label === "Home") {
+            navigate("/");
+        } else if (label === "My Orders") {
+            navigate("/orders");
+        } else if (label === "Category") {
+            navigate("/category");
+        } else if (label === "Account") {
+            navigate("/account");
+        }
+    };
     return (
         <div className="fixed bottom-0 left-0 w-full h-16 bg-white/70 dark:bg-black/20 backdrop-blur-xl shadow-top z-50 border-t border-orange-300/40">
             <div className="w-11/12 mx-auto h-full grid grid-cols-4 items-center">
@@ -18,6 +30,7 @@ const BottomNavUser = () => {
                         whileTap={{ scale: 0.8 }}
                         whileHover={{ scale: 1.1 }}
                         className="flex flex-col items-center justify-center text-orange-600 font-medium"
+                        onClick={() => handleclick(item.label)}
                     >
                         <motion.div
                             initial={{ opacity: 0, y: 12 }}

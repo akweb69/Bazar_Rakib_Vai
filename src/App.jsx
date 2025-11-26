@@ -10,6 +10,7 @@ import AdminDash from './Admin/Pages/AdminDash';
 import CategoryManagement from './Admin/Pages/CategoryManagement';
 import SignupForm from './Pages/SignupForm';
 import LoginForm from './Pages/LoginForm';
+import Account from './Pages/Account';
 
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
             <Route index element={<HomePage />} />
             <Route path="signup" element={<SignupForm />} />
             <Route path="login" element={<LoginForm />} />
+            <Route path="account" element={<Account />} />
 
 
           </Route>
