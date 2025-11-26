@@ -24,10 +24,8 @@ const ProductCard = ({ product }) => {
                     onClick={() => setOpenModal(true)}
                     className="mt-4 w-full bg-orange-500 text-white py-2 rounded-md hover:bg-orange-600 transition-colors duration-300"
                 >
-                    Order Now
+                    Add to Cart
                 </button>
-
-
 
             </div>
 
@@ -76,12 +74,12 @@ const ProductCard = ({ product }) => {
                                     </select>
                                 </div>
 
-                                {/* order now btn */}
+                                {/* cart now btn */}
                                 <button
                                     onClick={() => setOpenModal(false)}
                                     className="mt-4 w-full bg-orange-500 text-white py-2 rounded-md hover:bg-orange-600 transition-colors duration-300"
                                 >
-                                    Order Now
+                                    Cart Now
                                 </button>
                             </div>
 
