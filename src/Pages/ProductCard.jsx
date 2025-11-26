@@ -15,7 +15,7 @@ const ProductCard = ({ product }) => {
     return (
         <div>
 
-            <div className="border border-orange-300 rounded-lg p-4 hover:shadow-lg bg-white transition-shadow duration-300">
+            <div className=" rounded-lg p-4 hover:shadow-lg shadow transition-shadow duration-300">
                 <img src={image} alt={name} className="w-full h-40 object-contain mb-4 rounded-md" />
                 <h3 className="text-lg font-semibold mb-2">{name}</h3>
                 <p className="text-orange-500 font-bold text-xl">RM {price}</p>

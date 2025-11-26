@@ -37,10 +37,10 @@ const Category = () => {
                     Categories
                 </h2>
                 <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-5 w-full">
-                    {[...Array(20)].map((_, i) => (
+                    {[...Array(4)].map((_, i) => (
                         <div key={i} className="flex flex-col items-center">
-                            <div className="w-16 h-16 md:w-20 md:h-20 bg-gray-200 border-2 border-dashed rounded-full animate-pulse" />
-                            <div className="h-3 bg-gray-200 rounded-full w-14 mt-2 animate-pulse" />
+                            <div className="w-16 h-16 md:w-20 md:h-20 bg-orange-200 border border-orange-200 border-dashed rounded-full animate-pulse" />
+                            <div className="h-3 bg-orange-200 rounded-full w-14 mt-2 animate-pulse" />
                         </div>
                     ))}
                 </div>
