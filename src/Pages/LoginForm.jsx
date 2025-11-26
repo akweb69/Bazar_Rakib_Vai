@@ -2,12 +2,16 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../Context/AuthContext";
 import { Mail, Lock, LogIn, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const LoginForm = () => {
     const { login } = useContext(AuthContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
+
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -15,8 +19,10 @@ const LoginForm = () => {
         try {
             await login(email, password);
             // Success feedback could be improved with toast later
+            navigate("/");
+            toast.success("Login successful!");
         } catch (err) {
-            alert(err.message || "Login failed. Please try again.");
+            toast.error("Login failed. Please try again.");
         } finally {
             setIsLoading(false);
         }
