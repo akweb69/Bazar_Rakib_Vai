@@ -16,6 +16,17 @@ const Account = () => {
     const { user, loading, logout } = React.useContext(AuthContext);
     const navigate = useNavigate();
 
+    // loguot--->
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate("/");
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
+    };
+
+
     if (loading) {
         return (
             <div className="min-h-screen -my-4 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center  justify-center">
@@ -182,7 +193,7 @@ const Account = () => {
                         <motion.button
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.97 }}
-                            onClick={logout}
+                            onClick={handleLogout}
                             className="w-full mt-10 py-5 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-400 hover:to-pink-500 text-white font-bold text-lg rounded-xl shadow-xl transition-all duration-300 flex items-center justify-center gap-3 group"
                         >
                             <LogOut className="w-5 h-5 group-hover:rotate-12 transition-transform" />

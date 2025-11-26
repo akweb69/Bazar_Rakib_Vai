@@ -8,9 +8,6 @@ import {
 import { auth } from "../firebase";
 import axios from "axios";
 
-
-
-
 export const AuthContext = createContext(null);
 
 const AuthProvider = ({ children }) => {
@@ -18,34 +15,36 @@ const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const base_url = import.meta.env.VITE_BASE_URL;
 
-    // Signup
     const signup = (email, password) => {
         setLoading(true);
         return createUserWithEmailAndPassword(auth, email, password);
     };
 
-    // Login
     const login = (email, password) => {
         setLoading(true);
         return signInWithEmailAndPassword(auth, email, password);
     };
 
-    // Logout
     const logout = () => {
         setLoading(true);
         return signOut(auth);
     };
 
-    // Listen for auth state changes
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
 
-            const getEmail = currentUser ? currentUser.email : null;
-            axios.get(`${base_url}/users?email=${getEmail}`)
-                .then(res => {
-                    const userData = res.data;
-                    setUser(userData[0]);
-                    console.log("Auth State Changed:", userData[0]);
+            // If user not logged in → set null
+            if (!currentUser) {
+                setUser(null);
+                setLoading(false);
+                return;
+            }
+
+            // Fetch user from database
+            axios.get(`${base_url}/users?email=${currentUser.email}`)
+                .then((res) => {
+                    const userData = res.data[0] || null;
+                    setUser(userData);
                 })
                 .catch(() => {
                     setUser(null);
