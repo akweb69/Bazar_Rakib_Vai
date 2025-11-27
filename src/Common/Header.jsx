@@ -26,6 +26,9 @@ const Header = () => {
         }
 
         toast.success("Proceeding to checkout...");
+        setOpenCart(false);
+        navigate('/checkout');
+
         // Implement further checkout functionality here
     }
 

@@ -97,7 +97,7 @@ const Account = () => {
     }
 
     return (
-        <div className="min-h-screen -my-4 bg-gray-900 flex items-center justify-center px-4 relative overflow-hidden">
+        <div className="min-h-screen -my-4 py-4 bg-gray-900 flex items-center justify-center px-4 relative overflow-hidden">
             {/* Animated Background Orbs */}
             <div className="absolute inset-0">
                 <motion.div
