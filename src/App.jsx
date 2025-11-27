@@ -14,6 +14,7 @@ import Account from './Pages/Account';
 import CetegoryProducts from './Pages/CetegoryProducts';
 import Checkout from './Pages/Checkout';
 import Cart from './Pages/Cart';
+import MyOrders from './Pages/MyOrders';
 
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
             <Route path="category/:slug" element={<CetegoryProducts />} />
             <Route path="checkout" element={<Checkout />} />
             <Route path="cart" element={<Cart />} />
+            <Route path="orders" element={<MyOrders />} />
 
 
           </Route>
