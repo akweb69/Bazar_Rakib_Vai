@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Home, ShoppingBag, LayoutGrid, User, ShoppingCart } from "lucide-react";
+import { Home, ShoppingBag, User, ShoppingCart, History } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -8,7 +8,7 @@ const BottomNavUser = () => {
         { id: 1, label: "Home", icon: Home },
         { id: 2, label: "My Orders", icon: ShoppingBag },
         { id: 3, label: "My Cart", icon: ShoppingCart },
-        { id: 4, label: "Category", icon: LayoutGrid },
+        { id: 4, label: "History", icon: History },
         { id: 5, label: "Account", icon: User },
     ];
 
@@ -21,7 +21,7 @@ const BottomNavUser = () => {
         if (item.label === "Home") navigate("/");
         else if (item.label === "My Orders") navigate("/orders");
         else if (item.label === "My Cart") navigate("/cart");
-        else if (item.label === "Category") navigate("/category");
+        else if (item.label === "History") navigate("/history");
         else if (item.label === "Account") navigate("/account");
     };
 
