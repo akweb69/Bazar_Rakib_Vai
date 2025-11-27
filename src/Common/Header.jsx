@@ -24,6 +24,9 @@ const Header = () => {
             toast.error("Your cart is empty. Please add items to proceed to checkout.");
             return;
         }
+
+        toast.success("Proceeding to checkout...");
+        // Implement further checkout functionality here
     }
 
 

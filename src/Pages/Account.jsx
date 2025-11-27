@@ -6,17 +6,47 @@ import {
     Mail,
     LogOut,
     Sparkles,
-    Camera,
     Shield,
     Loader2,
+    MapPin,
+    Edit3,
+    Check,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const Account = () => {
     const { user, loading, logout } = React.useContext(AuthContext);
     const navigate = useNavigate();
 
-    const primaryColor = "#10B981"; // তোমার চাওয়া ডিফল্ট কালার
+    // Delivery Address States
+    const [isEditingAddress, setIsEditingAddress] = React.useState(false);
+    const [addressLoading, setAddressLoading] = React.useState(false);
+    const [addressForm, setAddressForm] = React.useState({
+        street: "",
+        city: "",
+        state: "",
+        zipCode: "",
+        country: "Bangladesh",
+        phone: "",
+    });
+
+    const primaryColor = "#10B981"; // Emerald-500
+
+    // Fill form if user already has delivery address
+    React.useEffect(() => {
+        if (user?.deliveryAddress) {
+            setAddressForm({
+                street: user.deliveryAddress.street || "",
+                city: user.deliveryAddress.city || "",
+                state: user.deliveryAddress.state || "",
+                zipCode: user.deliveryAddress.zipCode || "",
+                country: user.deliveryAddress.country || "Bangladesh",
+                phone: user.deliveryAddress.phone || "",
+            });
+        }
+    }, [user]);
 
     const handleLogout = async () => {
         try {
@@ -24,6 +54,37 @@ const Account = () => {
             navigate("/");
         } catch (error) {
             console.error("Logout failed:", error);
+        }
+    };
+
+    // Save or Update Delivery Address
+    const handleSaveAddress = async () => {
+        // Basic validation
+        if (!addressForm.street || !addressForm.city || !addressForm.phone) {
+            toast.error("Street, City and Phone are required!");
+            return;
+        }
+
+        setAddressLoading(true);
+        try {
+            const response = await axios.patch(`${import.meta.env.VITE_BASE_URL}/users/${user.email}`, {
+                deliveryAddress: addressForm,
+            });
+
+            if (response.data.modifiedCount > 0 || response.data.matchedCount > 0) {
+                toast.success(
+                    user?.deliveryAddress
+                        ? "Delivery address updated successfully!"
+                        : "Delivery address added successfully!"
+                );
+                setIsEditingAddress(false);
+                window.location.reload();
+            }
+        } catch (error) {
+            console.error("Address save error:", error);
+            toast.error("Failed to save address. Try again.");
+        } finally {
+            setAddressLoading(false);
         }
     };
 
@@ -37,7 +98,7 @@ const Account = () => {
 
     return (
         <div className="min-h-screen -my-4 bg-gray-900 flex items-center justify-center px-4 relative overflow-hidden">
-            {/* Animated Background Orbs - Emerald Theme */}
+            {/* Animated Background Orbs */}
             <div className="absolute inset-0">
                 <motion.div
                     animate={{
@@ -59,7 +120,7 @@ const Account = () => {
                 />
             </div>
 
-            {/* Not Logged In State */}
+            {/* Not Logged In */}
             {!user ? (
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -106,7 +167,7 @@ const Account = () => {
                     </div>
                 </motion.div>
             ) : (
-                /* Logged In - Profile Card */
+                /* Logged In - Full Profile */
                 <motion.div
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -114,7 +175,7 @@ const Account = () => {
                     className="relative z-10 w-full max-w-2xl"
                 >
                     <div className="backdrop-blur-2xl bg-white/10 border border-white/20 rounded-3xl shadow-2xl p-10 md:p-12">
-                        {/* Header */}
+                        {/* Header - Profile Pic & Name */}
                         <div className="text-center mb-10">
                             <motion.div
                                 initial={{ scale: 0 }}
@@ -133,7 +194,10 @@ const Account = () => {
                                             className="w-full h-full object-cover"
                                         />
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: primaryColor }}>
+                                        <div
+                                            className="w-full h-full flex items-center justify-center"
+                                            style={{ backgroundColor: primaryColor }}
+                                        >
                                             <User className="w-16 h-16 text-white/80" />
                                         </div>
                                     )}
@@ -168,12 +232,17 @@ const Account = () => {
                                 transition={{ delay: 0.8 }}
                                 className="flex items-center gap-5 p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl"
                             >
-                                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${primaryColor}20` }}>
+                                <div
+                                    className="w-12 h-12 rounded-xl flex items-center justify-center"
+                                    style={{ backgroundColor: `${primaryColor}20` }}
+                                >
                                     <User className="w-6 h-6" style={{ color: primaryColor }} />
                                 </div>
                                 <div>
                                     <p className="text-white/50 text-sm">Full Name</p>
-                                    <p className="text-white font-medium text-lg">{user?.name || "Not set"}</p>
+                                    <p className="text-white font-medium text-lg">
+                                        {user?.name || "Not set"}
+                                    </p>
                                 </div>
                             </motion.div>
 
@@ -184,13 +253,152 @@ const Account = () => {
                                 transition={{ delay: 0.9 }}
                                 className="flex items-center gap-5 p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl"
                             >
-                                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${primaryColor}20` }}>
+                                <div
+                                    className="w-12 h-12 rounded-xl flex items-center justify-center"
+                                    style={{ backgroundColor: `${primaryColor}20` }}
+                                >
                                     <Mail className="w-6 h-6" style={{ color: primaryColor }} />
                                 </div>
                                 <div>
                                     <p className="text-white/50 text-sm">Email Address</p>
-                                    <p className="text-white font-medium text-lg break-all">{user?.email}</p>
+                                    <p className="text-white font-medium text-lg break-all">
+                                        {user?.email}
+                                    </p>
                                 </div>
+                            </motion.div>
+
+                            {/* Delivery Address Section */}
+                            <motion.div
+                                initial={{ x: -50, opacity: 0 }}
+                                animate={{ x: 0, opacity: 1 }}
+                                transition={{ delay: 1.0 }}
+                                className="p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl"
+                            >
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div
+                                            className="w-12 h-12 rounded-xl flex items-center justify-center"
+                                            style={{ backgroundColor: `${primaryColor}20` }}
+                                        >
+                                            <MapPin className="w-6 h-6" style={{ color: primaryColor }} />
+                                        </div>
+                                        <div>
+                                            <p className="text-white/50 text-sm">Delivery Address</p>
+                                            {user?.deliveryAddress ? (
+                                                <p className="text-white font-medium text-lg">
+                                                    {user.deliveryAddress.street}, {user.deliveryAddress.city}
+                                                </p>
+                                            ) : (
+                                                <p className="text-white/50">Not added yet</p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        onClick={() => setIsEditingAddress(!isEditingAddress)}
+                                        className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all"
+                                    >
+                                        {isEditingAddress ? (
+                                            <Check className="w-5 h-5 text-white" />
+                                        ) : (
+                                            <Edit3 className="w-5 h-5 text-white" />
+                                        )}
+                                    </button>
+                                </div>
+
+                                {/* Address Form - Shows only when editing */}
+                                {isEditingAddress && (
+                                    <motion.div
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: "auto" }}
+                                        exit={{ opacity: 0, height: 0 }}
+                                        transition={{ duration: 0.3 }}
+                                        className="space-y-4 mt-5"
+                                    >
+                                        <input
+                                            type="text"
+                                            placeholder="Street / House / Flat No."
+                                            value={addressForm.street}
+                                            onChange={(e) =>
+                                                setAddressForm({ ...addressForm, street: e.target.value })
+                                            }
+                                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-emerald-400 transition"
+                                        />
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <input
+                                                type="text"
+                                                placeholder="City"
+                                                value={addressForm.city}
+                                                onChange={(e) =>
+                                                    setAddressForm({ ...addressForm, city: e.target.value })
+                                                }
+                                                className="px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-emerald-400"
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="State / Division"
+                                                value={addressForm.state}
+                                                onChange={(e) =>
+                                                    setAddressForm({ ...addressForm, state: e.target.value })
+                                                }
+                                                className="px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-emerald-400"
+                                            />
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <input
+                                                type="text"
+                                                placeholder="ZIP Code"
+                                                value={addressForm.zipCode}
+                                                onChange={(e) =>
+                                                    setAddressForm({ ...addressForm, zipCode: e.target.value })
+                                                }
+                                                className="px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-emerald-400"
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="Country"
+                                                value={addressForm.country}
+                                                onChange={(e) =>
+                                                    setAddressForm({ ...addressForm, country: e.target.value })
+                                                }
+                                                className="px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-emerald-400"
+                                            />
+                                        </div>
+                                        <input
+                                            type="text"
+                                            placeholder="Phone Number (01xxxxxxxxx)"
+                                            value={addressForm.phone}
+                                            onChange={(e) =>
+                                                setAddressForm({ ...addressForm, phone: e.target.value })
+                                            }
+                                            className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:border-emerald-400 transition"
+                                        />
+
+                                        <div className="flex gap-3 pt-3">
+                                            <button
+                                                onClick={handleSaveAddress}
+                                                disabled={addressLoading}
+                                                style={{ backgroundColor: primaryColor }}
+                                                className="flex-1 py-3 text-white font-medium rounded-xl hover:brightness-110 transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+                                            >
+                                                {addressLoading ? (
+                                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                                ) : (
+                                                    <>
+                                                        <Check className="w-5 h-5" />
+                                                        Save Address
+                                                    </>
+                                                )}
+                                            </button>
+                                            <button
+                                                onClick={() => setIsEditingAddress(false)}
+                                                className="flex-1 py-3 bg-white/10 border border-white/30 text-white rounded-xl hover:bg-white/20 transition"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                )}
                             </motion.div>
                         </div>
 
@@ -207,12 +415,14 @@ const Account = () => {
                         </motion.button>
                     </div>
 
-                    {/* Bottom Glow */}
+                    {/* Bottom Glow Effect */}
                     <motion.div
                         animate={{ opacity: [0.4, 0.8, 0.4] }}
                         transition={{ duration: 4, repeat: Infinity }}
                         className="absolute inset-x-0 -bottom-20 h-40 blur-3xl -z-10"
-                        style={{ background: `linear-gradient(to top, ${primaryColor}80, transparent)` }}
+                        style={{
+                            background: `linear-gradient(to top, ${primaryColor}80, transparent)`,
+                        }}
                     />
                 </motion.div>
             )}
