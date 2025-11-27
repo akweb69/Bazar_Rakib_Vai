@@ -13,6 +13,7 @@ import LoginForm from './Pages/LoginForm';
 import Account from './Pages/Account';
 import CetegoryProducts from './Pages/CetegoryProducts';
 import Checkout from './Pages/Checkout';
+import Cart from './Pages/Cart';
 
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
             <Route path="account" element={<Account />} />
             <Route path="category/:slug" element={<CetegoryProducts />} />
             <Route path="checkout" element={<Checkout />} />
+            <Route path="cart" element={<Cart />} />
 
 
           </Route>

@@ -21,7 +21,7 @@ const Loader = ({ size = "md", className = "" }) => {
                 className="relative"
             >
                 <LoaderPinwheel
-                    className={`${sizeClasses[size] || sizeClasses.md} text-orange-500`}
+                    className={`${sizeClasses[size] || sizeClasses.md} text-emerald-500`}
                     strokeWidth={2.5}
                 />
 
@@ -37,7 +37,7 @@ const Loader = ({ size = "md", className = "" }) => {
                         ease: "easeInOut",
                     }}
                 >
-                    <div className="w-3 h-3 bg-orange-400 rounded-full shadow-lg shadow-orange-400/50" />
+                    <div className="w-3 h-3 bg-emerald-400 rounded-full shadow-lg shadow-emerald-400/50" />
                 </motion.div>
             </motion.div>
         </div>
