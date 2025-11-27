@@ -11,6 +11,7 @@ import CategoryManagement from './Admin/Pages/CategoryManagement';
 import SignupForm from './Pages/SignupForm';
 import LoginForm from './Pages/LoginForm';
 import Account from './Pages/Account';
+import CetegoryProducts from './Pages/CetegoryProducts';
 
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
             <Route path="signup" element={<SignupForm />} />
             <Route path="login" element={<LoginForm />} />
             <Route path="account" element={<Account />} />
+            <Route path="category/:slug" element={<CetegoryProducts />} />
 
 
           </Route>
