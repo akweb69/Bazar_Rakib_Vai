@@ -16,7 +16,8 @@ const Account = () => {
     const { user, loading, logout } = React.useContext(AuthContext);
     const navigate = useNavigate();
 
-    // loguot--->
+    const primaryColor = "#10B981"; // তোমার চাওয়া ডিফল্ট কালার
+
     const handleLogout = async () => {
         try {
             await logout();
@@ -26,18 +27,17 @@ const Account = () => {
         }
     };
 
-
     if (loading) {
         return (
-            <div className="min-h-screen -my-4 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center  justify-center">
+            <div className="min-h-screen -my-4 bg-gray-900 flex items-center justify-center">
                 <Loader2 className="w-12 h-12 text-white animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen -my-4 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 flex items-center justify-center px-4 relative overflow-hidden">
-            {/* Animated Background Orbs - Same as Signup */}
+        <div className="min-h-screen -my-4 bg-gray-900 flex items-center justify-center px-4 relative overflow-hidden">
+            {/* Animated Background Orbs - Emerald Theme */}
             <div className="absolute inset-0">
                 <motion.div
                     animate={{
@@ -45,7 +45,8 @@ const Account = () => {
                         y: [0, 120, -80, 100, 0],
                     }}
                     transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-                    className="absolute top-10 left-10 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
+                    className="absolute top-10 left-10 w-96 h-96 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
+                    style={{ backgroundColor: primaryColor }}
                 />
                 <motion.div
                     animate={{
@@ -53,7 +54,8 @@ const Account = () => {
                         y: [0, -100, 120, -80, 0],
                     }}
                     transition={{ duration: 35, repeat: Infinity, ease: "linear" }}
-                    className="absolute bottom-20 right-20 w-80 h-80 bg-pink-600 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
+                    className="absolute bottom-20 right-20 w-80 h-80 rounded-full mix-blend-multiply filter blur-3xl opacity-30"
+                    style={{ backgroundColor: primaryColor }}
                 />
             </div>
 
@@ -85,7 +87,8 @@ const Account = () => {
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => navigate("/login")}
-                            className="px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-xl shadow-xl hover:from-cyan-400 hover:to-blue-500 transition-all flex items-center justify-center gap-3"
+                            style={{ backgroundColor: primaryColor }}
+                            class name="px-8 py-4 text-white font-semibold rounded-xl shadow-xl hover:brightness-110 transition-all flex items-center justify-center gap-3"
                         >
                             <Mail className="w-5 h-5" />
                             Sign In
@@ -119,7 +122,10 @@ const Account = () => {
                                 transition={{ type: "spring", stiffness: 200, delay: 0.3 }}
                                 className="relative inline-block"
                             >
-                                <div className="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 border-cyan-400 shadow-2xl relative">
+                                <div
+                                    className="w-32 h-32 mx-auto rounded-full overflow-hidden border-4 shadow-2xl relative"
+                                    style={{ borderColor: primaryColor }}
+                                >
                                     {user?.profilePic ? (
                                         <img
                                             src={user.profilePic}
@@ -127,11 +133,10 @@ const Account = () => {
                                             className="w-full h-full object-cover"
                                         />
                                     ) : (
-                                        <div className="w-full h-full bg-gradient-to-br from-cyan-500 to-purple-600 flex items-center justify-center">
+                                        <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: primaryColor }}>
                                             <User className="w-16 h-16 text-white/80" />
                                         </div>
                                     )}
-
                                 </div>
                             </motion.div>
 
@@ -149,7 +154,7 @@ const Account = () => {
                                 transition={{ delay: 0.7 }}
                                 className="text-white/60 mt-2 flex items-center justify-center gap-2"
                             >
-                                <Sparkles className="w-4 h-4 text-yellow-300" />
+                                <Sparkles className="w-4 h-4" style={{ color: primaryColor }} />
                                 Welcome back!
                             </motion.p>
                         </div>
@@ -163,8 +168,8 @@ const Account = () => {
                                 transition={{ delay: 0.8 }}
                                 className="flex items-center gap-5 p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl"
                             >
-                                <div className="w-12 h-12 bg-cyan-500/20 rounded-xl flex items-center justify-center">
-                                    <User className="w-6 h-6 text-cyan-300" />
+                                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${primaryColor}20` }}>
+                                    <User className="w-6 h-6" style={{ color: primaryColor }} />
                                 </div>
                                 <div>
                                     <p className="text-white/50 text-sm">Full Name</p>
@@ -179,8 +184,8 @@ const Account = () => {
                                 transition={{ delay: 0.9 }}
                                 className="flex items-center gap-5 p-5 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-xl"
                             >
-                                <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
-                                    <Mail className="w-6 h-6 text-purple-300" />
+                                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${primaryColor}20` }}>
+                                    <Mail className="w-6 h-6" style={{ color: primaryColor }} />
                                 </div>
                                 <div>
                                     <p className="text-white/50 text-sm">Email Address</p>
@@ -194,7 +199,8 @@ const Account = () => {
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.97 }}
                             onClick={handleLogout}
-                            className="w-full mt-10 py-5 bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-400 hover:to-pink-500 text-white font-bold text-lg rounded-xl shadow-xl transition-all duration-300 flex items-center justify-center gap-3 group"
+                            style={{ backgroundColor: primaryColor }}
+                            className="w-full mt-10 py-5 text-white font-bold text-lg rounded-xl shadow-xl hover:brightness-110 transition-all duration-300 flex items-center justify-center gap-3 group"
                         >
                             <LogOut className="w-5 h-5 group-hover:rotate-12 transition-transform" />
                             Sign Out
@@ -205,7 +211,8 @@ const Account = () => {
                     <motion.div
                         animate={{ opacity: [0.4, 0.8, 0.4] }}
                         transition={{ duration: 4, repeat: Infinity }}
-                        className="absolute inset-x-0 -bottom-20 h-40 bg-gradient-to-t from-purple-600/50 to-transparent blur-3xl -z-10"
+                        className="absolute inset-x-0 -bottom-20 h-40 blur-3xl -z-10"
+                        style={{ background: `linear-gradient(to top, ${primaryColor}80, transparent)` }}
                     />
                 </motion.div>
             )}

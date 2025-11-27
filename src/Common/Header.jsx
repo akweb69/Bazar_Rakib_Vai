@@ -20,14 +20,14 @@ const Header = () => {
             initial={{ y: -40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.4 }}
-            className="w-full h-14 bg-white/70 dark:bg-black/20 sticky top-0 z-50 shadow-sm backdrop-blur-xl border-b border-orange-300/30"
+            className="w-full h-14 bg-white/70  sticky top-0 z-50 shadow-sm backdrop-blur-xl border-b border-emerald-300/30"
         >
             <div className="w-11/12 mx-auto flex items-center justify-between h-full">
 
                 {/* Left Logo */}
                 <motion.div
                     whileHover={{ scale: 1.1 }}
-                    className="text-2xl font-extrabold text-orange-600 tracking-wide"
+                    className="text-2xl font-extrabold text-emerald-600 tracking-wide"
                 >
                     Bazar
                 </motion.div>
@@ -38,7 +38,7 @@ const Header = () => {
                         onClick={() => setOpenCart(!openCart)}
                         whileTap={{ scale: 0.8 }}
                         whileHover={{ scale: 1.1 }}
-                        className="h-10 w-10 rounded-full bg-orange-500 flex justify-center items-center text-white shadow-md cursor-pointer relative"
+                        className="h-10 w-10 rounded-full bg-emerald-500 flex justify-center items-center text-white shadow-md cursor-pointer relative"
                     >
                         <ShoppingCart size={16} />
 
@@ -49,7 +49,7 @@ const Header = () => {
                     {/* sign up btn */}
 
                     {
-                        !loading && user && user?.email ? <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-orange-500 shadow-md cursor-pointer">
+                        !loading && user && user?.email ? <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-emerald-500 shadow-md cursor-pointer">
 
                             <img className="w-full " src={user?.profilePic} alt="" />
                         </div> :
@@ -57,7 +57,7 @@ const Header = () => {
                                 onClick={handleSignUp}
                                 whileTap={{ scale: 0.8 }}
                                 whileHover={{ scale: 1.1 }}
-                                className="px-4 py-2 rounded-md bg-orange-600 text-sm text-white font-semibold shadow-md cursor-pointer"
+                                className="px-4 py-2 rounded-md bg-emerald-600 text-sm text-white font-semibold shadow-md cursor-pointer"
                             >
                                 Sign Up
                             </motion.button>
@@ -79,7 +79,7 @@ const Header = () => {
                     <div
                         onClick={() => setOpenCart(false)} className="absolute top-0 right-0 h-10 w-10 rounded-l-full flex justify-center items-center cursor-pointer bg-red-500 text-white font-semibold pl-1">X</div>
 
-                    <h3 className="text-lg font-semibold mb-4 text-orange-500">Shopping Cart</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-emerald-500">Shopping Cart</h3>
 
                     {cart.length > 0 ? (
                         <ul className="space-y-3 max-h-60 overflow-y-auto">

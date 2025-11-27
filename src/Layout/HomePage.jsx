@@ -5,7 +5,7 @@ import ProductSection from "../Sections/ProductSection";
 
 const HomePage = () => {
     return (
-        <div className="w-11/12 mx-auto">
+        <div className="w-11/12 mx-auto ">
             <HeroSection />
             <Category />
             <ProductSection />

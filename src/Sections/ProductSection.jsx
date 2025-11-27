@@ -19,7 +19,7 @@ const ProductSection = () => {
             .then((res) => {
                 const data = res.data;
                 setProducts(data);
-                setFilteredProducts(data); // initially show all
+                setFilteredProducts(data);
             })
             .catch(() => {
                 setProducts([]);
@@ -34,14 +34,12 @@ const ProductSection = () => {
     useEffect(() => {
         let result = [...products];
 
-        // 1. Search by product name
         if (searchTerm.trim()) {
             result = result.filter((product) =>
                 product.name?.toLowerCase().includes(searchTerm.toLowerCase())
             );
         }
 
-        // 2. Sorting
         if (sortBy) {
             result.sort((a, b) => {
                 switch (sortBy) {
@@ -54,7 +52,7 @@ const ProductSection = () => {
                     case "name-desc":
                         return b.name.localeCompare(a.name);
                     case "newest":
-                        return new Date(b.createdAt) - new Date(a.createdAt); // assuming you have createdAt field
+                        return new Date(b.createdAt) - new Date(a.createdAt);
                     default:
                         return 0;
                 }
@@ -66,12 +64,12 @@ const ProductSection = () => {
 
     return (
         <div className="w-full py-8">
-            <h2 className="text-2xl md:text-3xl font-semibold text-center mb-6 text-orange-500 font2">
+            <h2 className="text-2xl md:text-3xl font-semibold text-center mb-6 text-emerald-500 font2">
                 Products
             </h2>
 
             {/* Search & Sort Controls */}
-            <div className="w-full px-4 mb-8 grid  grid-cols-2 gap-4">
+            <div className="w-full px-4 mb-8 grid grid-cols-2 gap-4">
                 {/* Search Box */}
                 <div className="relative w-full">
                     <input
@@ -79,10 +77,10 @@ const ProductSection = () => {
                         placeholder="Search products..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full px-4 py-2 pl-10 border border-orange-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
+                        className="w-full px-4 py-2 pl-10 border border-emerald-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm focus:border-emerald-500"
                     />
                     <svg
-                        className="absolute left-3 top-2.5 w-5 h-5 text-gray-500"
+                        className="absolute left-3 top-2.5 w-5 h-5 text-emerald-600"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -100,7 +98,7 @@ const ProductSection = () => {
                 <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value)}
-                    className="px-4  py-2 text-sm border border-orange-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="px-4 py-2 text-sm border border-emerald-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                 >
                     <option value="">Default Sorting</option>
                     <option value="price-asc">Price: Low to High</option>
