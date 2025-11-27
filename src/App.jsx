@@ -15,6 +15,7 @@ import CetegoryProducts from './Pages/CetegoryProducts';
 import Checkout from './Pages/Checkout';
 import Cart from './Pages/Cart';
 import MyOrders from './Pages/MyOrders';
+import OrderHistory from './Pages/OrderHistory';
 
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
             <Route path="checkout" element={<Checkout />} />
             <Route path="cart" element={<Cart />} />
             <Route path="orders" element={<MyOrders />} />
+            <Route path="history" element={<OrderHistory />} />
 
 
           </Route>
