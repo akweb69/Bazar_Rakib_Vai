@@ -21,6 +21,13 @@ const ProductCard = ({ product }) => {
     const primaryColor = "#10B981";
 
     const handleAddToCart = () => {
+        // check if user is logged in
+        if (!user) {
+            toast.error("Please log in to add items to your cart.");
+            return;
+        }
+
+
         const cartItem = {
             productId: _id,
             name,
@@ -31,6 +38,7 @@ const ProductCard = ({ product }) => {
         };
 
         setLoading(true);
+
         axios
             .post(`${base_url}/carts`, cartItem)
             .then(() => {
