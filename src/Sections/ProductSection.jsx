@@ -69,7 +69,7 @@ const ProductSection = () => {
             </h2>
 
             {/* Search & Sort Controls */}
-            <div className="w-full px-4 mb-8 grid grid-cols-2 gap-4">
+            <div className="w-full mb-8 grid grid-cols-2 gap-4">
                 {/* Search Box */}
                 <div className="relative w-full">
                     <input
@@ -127,7 +127,7 @@ const ProductSection = () => {
 
             {/* Products Grid */}
             {!loading && filteredProducts.length > 0 && (
-                <div className="w-full max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div className="w-full  grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                     {filteredProducts.map((item) => (
                         <ProductCard key={item._id} product={item} />
                     ))}

@@ -57,22 +57,22 @@ const ProductCard = ({ product }) => {
     return (
         <div>
             {/* Product Card */}
-            <div className="bg-white backdrop-blur-md rounded-2xl p-4 hover:shadow-2xl transition-all duration-300 border border-white/20">
+            <div className="bg-white backdrop-blur-md shadow-lg rounded-md p-4 hover:shadow-2xl transition-all duration-300 border border-white/20">
                 <img
                     src={image}
                     alt={name}
-                    className="w-full h-32  object-contain mb-4 rounded-xl "
+                    className="w-full h-32  object-contain mb-4 rounded-md "
                 />
-                <h3 className="text-lg font-bold  mb-2 line-clamp-2">{name}</h3>
-                <p className="text-2xl font-bold mb-4" style={{ color: primaryColor }}>
-                    RM {price} <span className="text-sm font-medium ">/ Per KG</span>
+                <h3 className=" font-bold  mb-1 line-clamp-2">{name.slice(0, 20)}</h3>
+                <p className="text-lg font-bold " style={{ color: primaryColor }}>
+                    RM {price} <span className="text-xs font-medium ">/ Per KG</span>
                 </p>
 
                 {/* Add to Cart Button */}
                 <button
                     onClick={() => setOpenModal(true)}
                     style={{ backgroundColor: primaryColor }}
-                    className="mt-4 w-full text-white font-semibold py-3 rounded-xl hover:brightness-110 transition-all duration-300 shadow-lg"
+                    className="mt-2 w-full text-white font-semibold py-2 rounded-md hover:brightness-110 transition-all duration-300 shadow-lg"
                 >
                     Add to Cart
                 </button>
