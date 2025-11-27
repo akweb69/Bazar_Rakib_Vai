@@ -4,16 +4,41 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
 import useCart from "../Components/useCart";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 const Header = () => {
     const navigate = useNavigate();
     const { user, loading } = useContext(AuthContext)
     const [openCart, setOpenCart] = useState(false);
-    const { cart, isLoading } = useCart()
+    const { cart, isLoading, refetch } = useCart()
     console.log(cart);
 
     const handleSignUp = () => {
         navigate('/signup');
+    }
+
+    // handle check out---->
+    const handleCheckOut = () => {
+        if (cart.length === 0) {
+            toast.error("Your cart is empty. Please add items to proceed to checkout.");
+            return;
+        }
+    }
+
+
+    // handle remove item from cart---->
+    const handleRemoveFromCart = (itemId) => {
+        // Implement remove from cart functionality here
+        const id = itemId;
+        axios.delete(`${import.meta.env.VITE_BASE_URL}/carts/${id}`)
+            .then(() => {
+                toast.success("Item removed from cart successfully.");
+                refetch();
+            })
+            .catch(() => {
+                toast.error("Failed to remove item from cart.");
+            });
     }
     return (
         <motion.div
@@ -73,7 +98,7 @@ const Header = () => {
                     transition={{ duration: 1, type: "spring" }}
                     exit={{ opacity: 0, x: 1000 }}
 
-                    className="absolute top-14 right-0 w-10/12 bg-white/95 backdrop-blur-md rounded-l-lg shadow-lg p-4 z-50">
+                    className="absolute top-14 right-0 w-10/12 bg-white/95 backdrop-blur-md rounded-l-lg shadow-lg p-4 z-50 h-[80vh]">
 
                     {/* close btn */}
                     <div
@@ -82,22 +107,48 @@ const Header = () => {
                     <h3 className="text-lg font-semibold mb-4 text-emerald-500">Shopping Cart</h3>
 
                     {cart.length > 0 ? (
-                        <ul className="space-y-3 max-h-60 overflow-y-auto">
+                        <ul className="space-y-3 h-[60vh] overflow-y-auto">
                             {cart.map((item) => (
-                                <li key={item._id} className="flex items-center justify-between">
-                                    <div>
-                                        <p className="font-medium">{item.name}</p>
-                                        <p className="text-sm text-gray-500">
-                                            Quantity: {item.quantity} Kg
-                                        </p>
+                                <li key={item._id} className="flex items-center justify-between border-b pb-2 border-b-emerald-500">
+
+                                    <div className="flex items-center gap-3">
+                                        <div className="">
+                                            <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded-lg" />
+                                        </div>
+
+                                        <div>
+                                            <p className="font-medium">{item.name}</p>
+                                            <p className="text-sm text-gray-500">
+                                                Quantity: {item.quantity} Kg
+                                            </p>
+                                        </div>
                                     </div>
-                                    <p className="font-semibold">RM {item.price}</p>
+                                    <div className="flex items-end gap-4 flex-col">
+                                        <div
+                                            onClick={() => handleRemoveFromCart(item._id)}
+                                            className="w-6 h-6 rounded-full flex justify-center items-center mr-4 text-white cursor-pointer text-xs bg-red-500 ">
+                                            {/* Remove from cart button could go here */}
+                                            X
+                                        </div>
+                                        <p className="font-semibold text-lg pr-4 text-emerald-600">RM {item.price}</p>
+
+                                    </div>
                                 </li>
                             ))}
                         </ul>
                     ) : (
                         <p className="text-gray-500">Your cart is empty.</p>
                     )}
+                    {/* total amount---> */}
+                    <p className="mt-4 text-lg font-semibold text-gray-600">Total: RM {cart.reduce((total, item) => total + item.price, 0)}</p>
+                    {/* check out btn */}
+                    <motion.button
+                        onClick={handleCheckOut}
+                        whileTap={{ scale: 0.9 }}
+                        className="mt-4 w-full bg-emerald-600 text-white py-3 rounded-lg font-semibold shadow-md hover:brightness-110 transition-all"
+                    >
+                        Checkout
+                    </motion.button>
                 </motion.div>
             )}
 
